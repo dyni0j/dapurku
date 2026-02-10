@@ -1,0 +1,121 @@
+{% extends '../layout/base.html' %} {% block content %}
+<!-- Transaction Form Section including add transaction and edit transaction -->
+<section class="transaction-form">
+  <div class="content">
+    <a href="{% url 'profile' %}" class="back-btn">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="svg-25"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7.28 7.72a.75.75 0 0 1 0 1.06l-2.47 2.47H21a.75.75 0 0 1 0 1.5H4.81l2.47 2.47a.75.75 0 1 1-1.06 1.06l-3.75-3.75a.75.75 0 0 1 0-1.06l3.75-3.75a.75.75 0 0 1 1.06 0Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      Kembali ke profil
+    </a>
+
+    {% if transaction %}
+    <h1>Edit Transaksi</h1>
+    {% else %}
+    <h1>Tambah Transaksi</h1>
+    {% endif %} {% if form.errors %}
+    <div class="error-messages">
+      {% for field, errors in form.errors.items %}
+      <p>{{ field }}: {{ errors|join:", " }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="input-box">
+        <label for="product">Produk:</label>
+        <select id="product" name="product" required>
+          <option value="">Pilih Produk</option>
+          {% for prod in products %}
+          <option
+            value="{{ prod.id }}"
+            {%
+            if
+            transaction
+            and
+            transaction.product.id=""
+            ="prod.id"
+            %}selected{%
+            endif
+            %}
+          >
+            {{ prod.name }} - Rp {{ prod.price }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-box">
+        <label for="quantity">Jumlah:</label>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          value="{% if transaction %}{{ transaction.quantity }}{% endif %}"
+          min="1"
+          required
+        />
+      </div>
+      <div class="input-box">
+        <label for="total_price">Total Harga:</label>
+        <input
+          type="number"
+          id="total_price"
+          name="total_price"
+          value="{% if transaction %}{{ transaction.total_price }}{% endif %}"
+          readonly
+          required
+        />
+      </div>
+      <div class="input-box">
+        <label for="transaction_date">Tanggal Transaksi:</label>
+        <input
+          type="datetime-local"
+          id="transaction_date"
+          name="transaction_date"
+          value="{% if transaction %}{{ transaction.transaction_date|date:'Y-m-d\\TH:i' }}{% endif %}"
+          required
+        />
+      </div>
+      <button type="submit" class="submit-btn">
+        {% if transaction %}
+        <span>Perbarui Transaksi</span>
+        {% else %}
+        <span>Tambah Transaksi</span>
+        {% endif %}
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %} {% block script %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const quantityInput = document.getElementById("quantity");
+    const productSelect = document.getElementById("product");
+    const totalPriceInput = document.getElementById("total_price");
+
+    function calculateTotalPrice() {
+      const quantity = parseFloat(quantityInput.value) || 0;
+      const selectedOption = productSelect.options[productSelect.selectedIndex];
+      const price = selectedOption
+        ? parseFloat(
+            selectedOption.textContent.match(/Rp (\d+(\.\d+)?)/)?.[1],
+          ) || 0
+        : 0;
+      totalPriceInput.value = quantity * price;
+    }
+
+    quantityInput.addEventListener("input", calculateTotalPrice);
+    productSelect.addEventListener("change", calculateTotalPrice);
+  });
+</script>
+{% endblock %}

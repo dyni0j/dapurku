@@ -1,63 +1,10 @@
 === How To Run The App ===
-1. pipenv install
-2. Make a .env file that contains:
-    SECRET_KEY=django-insecure-t-5to3(+(0h$lu_sm&hetnyvt!nnm^wv#js#=6euqclneyh524 (type `` to generate randomize SECRET_KEY)
-    DEBUG=True
+1. Run `python manage.py runserver`
 
-    DB_NAME=dapurku_db
-    DB_USER=root
-    DB_PASSWORD=N@uff@l2oo5
-    DB_HOST=localhost
-    DB_PORT=3306
+=== Accounts ===
+1. Naufal Nur (UMKM) - N@uff@l2oo5
+2. Dwi Handayani (Customer) - dwih@nd@123
+4. Puput Camilan (UMKM) - t3m3nb00b13
 
-    XENDIT_SECRET_KEY=xnd_development_OQqmIWEBRHyIHyOsh2pbAkJCPSrzOyKEzWlGyFA775ZjKjrsTnyyjidcy40
-    XENDIT_PUBLIC_KEY=xnd_public_development_BNZ4arSRAIxuqXEIt3IhOJNlEqSx9iToLfxl0NZhCpVLwbnqk8G5LCXz1Hg2_
-    XENDIT_IS_PRODUCTION=False
-
-3. pipenv shell
-4. python manage.py runserver / pipenv run python manage.py runserver
-5. pip install -r requirements.txt
-6. pip install --upgrade -r requirements.txt
-7. pip freeze > requirements.txt
-
-## Setup
-1. Create a virtual environment: `python -m venv venv`
-2. Activate it: `venv\Scripts\activate` (Windows)
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run the server: `python manage.py runserver`
-
-# Admin Log-In
-mummiew - annanendra020422
-
-# UMKM Acc`s
-1. NaufalNR - N@uff@l2oo5
-2. DwiHanda - dwih@nd@123
-3. Keitora - kur0w@123
-4. Puput Camilan - t3m3nb00b13
-
-
-
-
-
-|===================== To-do List =====================|
-- Buat akun gmail khusus dapurku
-- Lanjutkan cart payment gateway buggeu
-- Sambungkan Contact page dengan email dapurku
-
-- Hosting
-- Membuat produk bisa di share ke sosmed
-- Manajemen Analisis pada halaman Profile
-- Integrasi Medsos bagian TikTok bagaimana?
-
-================== Screenshot Checklist ==================
-- Contact Page
-- Cart Page
-- Order Page
-- Manajemen Pelanggan (Profile UMKM)
-- Order (Payment Gateway)
-- UMKM Profile & Product Analytic per Product in Product 
-- UMKM Profile & Product Analytic All Product in User Profile Page 
-- Payment Gateway (OTP/Code)
-- Manajemen Pesanan (Analisis di profile, notif ke pembeli, log histori)
-- Manajemen Pemasaran (produk bisa di share ke sosmed)
-- Modul Analisis Data Penjualan
+=== BUGGEU ===
+3. Bikin Graphic Dari Rekapan Transaksi

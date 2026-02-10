@@ -32,6 +32,10 @@ urlpatterns = [
 
   path('address/manage/', views.manage_address, name='manage_address'),
   path('address/manage/<int:address_id>/', views.manage_address, name='manage_address'),
+
+  path('transaction/add/', views.add_transaction, name='add_transaction'),
+  path('transaction/edit/<int:transaction_id>/', views.edit_transaction, name='edit_transaction'),
+  path('transaction/delete/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
 ]
 
 if settings.DEBUG:

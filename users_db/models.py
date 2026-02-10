@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Sum
 
 class CustomUser(AbstractUser):
   STATUS_CHOICES = [
@@ -100,6 +99,21 @@ class OrderItem(models.Model):
 
   def get_total(self):
     return self.price * self.quantity
+  
+class Transaction(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='transactions', null=True)  # Removed null=True for security
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)  # Reference Product instead of duplicating name/price
+    quantity = models.PositiveIntegerField(default=1)  # Ensure positive
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, editable=False)  # Computed field, not editable
+    transaction_date = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        # Compute total_price server-side for accuracy
+        self.total_price = self.product.price * self.quantity
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.product.name} - {self.user.username} - {self.transaction_date}"
 
 class Cart(models.Model):
   user = models.ForeignKey(

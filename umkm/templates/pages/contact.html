@@ -72,15 +72,7 @@
             required
           ></textarea>
         </div>
-        <button type="submit">
-          Submit
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="svg-20"
-          ></svg>
-        </button>
+        <button type="submit" id="whatsapp-button">Submit</button>
       </form>
 
       {% if messages %}
@@ -95,4 +87,19 @@
     </div>
   </article>
 </section>
+{% endblock %} {% block script %}
+<script>
+  // Whatsapp Integration
+  document.addEventListener("DOMContentLoaded", () => {
+    const whatsappButton = document.getElementById("whatsapp-button");
+    whatsappButton.addEventListener("click", () => {
+      const name = document.getElementById("nama-input").value;
+      const email = document.getElementById("email-input").value;
+      const phoneNumber = "6285717110126"; // Ganti dengan nomor WhatsApp tujuan
+      const message = document.getElementById("message-input").value;
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=Halo, saya ${name} (${email}). ${message}`;
+      window.open(whatsappURL, "_blank");
+    });
+  });
+</script>
 {% endblock %}

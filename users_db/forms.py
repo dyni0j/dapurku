@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import inlineformset_factory
-from .models import CustomUser, Product
+from .models import CustomUser, Product, Transaction
 
 class RegisterForm(UserCreationForm):
   email = forms.EmailField(required=True)
@@ -53,3 +53,11 @@ class ProfileUpdateForm(forms.ModelForm):
     if phone and not phone.isdigit():
       raise forms.ValidationError("Nomor telepon harus berupa angka.")
     return phone
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['product', 'quantity', 'transaction_date']
+        widgets = {
+            'transaction_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }

@@ -104,21 +104,6 @@
             <span class="nama">{{ product.name }}</span>
             <span class="harga">{{ product.price }}</span>
             <p>{{ product.umkm_user_id.username }}</p>
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="svg-20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              {{ product.rating }} | {{ product.sold }} terjual
-            </span>
             <div class="btn-container">
               <a href="{% url 'edit_product' product.pk %}" class="edit-btn"
                 >Edit</a
@@ -138,53 +123,59 @@
       </div>
     </div>
 
-    <!-- UMKM ANALYTICAL DASHBOARD -->
-    <div class="dashboard">
-      <h2>Analisis UMKM</h2>
-      <div class="metrics">
-        <div class="metric-card">
-          <h3>Total Produk</h3>
-          <p>{{ dashboard.total_products }}</p>
-        </div>
-        <div class="metric-card">
-          <h3>Total Penjualan</h3>
-          <p>{{ dashboard.total_sales }}</p>
-        </div>
-        <div class="metric-card">
-          <h3>Total Pendapatan</h3>
-          <p>Rp{{ dashboard.total_revenue|floatformat:2 }}</p>
-        </div>
-        <div class="metric-card">
-          <h3>Rata-rata Rating</h3>
-          <p>{{ dashboard.average_rating }}</p>
-        </div>
+    <!-- Transaction CRUD with Graphic (including name of the product, price, amount, total price) -->
+    <div class="transactions">
+      <div class="head">
+        <h2 class="underline-text">Transaksi Terakhir</h2>
+        <a href="{% url 'add_transaction' %}">Tambah Transaksi</a>
       </div>
 
-      <canvas id="topProductsChart" width="400" height="200"></canvas>
-      {% if user.is_umkm and dashboard.top_products %} {{
-      dashboard.top_products|json_script:"top-products-data" }} {% endif %}
-    </div>
-    {% else %}
-    <!-- CUSTOMER ANALYTICAL DASHBOARD -->
-    <div class="dashboard">
-      <h2>Aktivitas Belanja Saya</h2>
-      <div class="metrics">
-        <div class="metric-card">
-          <h3>Total Pesanan</h3>
-          <p>{{ dashboard.total_orders }}</p>
+      <!-- Graphic based on Transaction List -->
+      <div class="transaction-chart">
+        {% if transactions %}
+        <canvas id="transactionChart" width="400" height="200"></canvas>
+        {% else %}
+        <p class="no-chart">
+          Belum ada transaksi untuk ditampilkan dalam grafik.
+        </p>
+        {% endif %}
+      </div>
+
+      <div class="col">
+        <span>Nama Produk</span>
+        <span>Harga</span>
+        <span>Jumlah</span>
+        <span>Total Harga</span>
+        <span>Tanggal</span>
+        <span>Aksi</span>
+      </div>
+      <!-- Transaction List -->
+      <div class="transaction-list">
+        {% for transaction in transactions %}
+        <div class="transaction-item">
+          <span>{{ transaction.product.name }}</span>
+          <span>Rp{{ transaction.product.price }}</span>
+          <span>{{ transaction.quantity }} pcs</span>
+          <span>Rp{{ transaction.total_price }}</span>
+          <span>{{ transaction.transaction_date }}</span>
+          <div class="btn-container">
+            <a
+              href="{% url 'edit_transaction' transaction.pk %}"
+              class="edit-btn"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_transaction' transaction.pk %}"
+              class="delete-btn"
+              >Hapus</a
+            >
+          </div>
         </div>
-        <div class="metric-card">
-          <h3>Total Barang Dibeli</h3>
-          <p>{{ dashboard.total_items }}</p>
+        {% empty %}
+        <div class="transaction-item">
+          <span class="no-transaction">Belum ada transaksi</span>
         </div>
-        <div class="metric-card">
-          <h3>Total Pengeluaran</h3>
-          <p>Rp{{ dashboard.total_spent|floatformat:2 }}</p>
-        </div>
-        <div class="metric-card">
-          <h3>Kategori Favorit</h3>
-          <p>{{ dashboard.favorite_category }}</p>
-        </div>
+        {% endfor %}
       </div>
     </div>
     {% endif %}
@@ -318,47 +309,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    /* CANVAS
-      const canvas = document.querySelector("#topProductsChart");
-      const jsonEl = document.querySelector("#top-products-data");
-
-      console.log("TEST!!!");
-      console.log(canvas, jsonEl);
-
-      if (!canvas || !jsonEl) return;
-
-      const topProducts = JSON.parse(jsonEl.textContent);
-
-      if (!Array.isArray(topProducts) || topProducts.length === 0) {
-        console.log("No top products data available.");
-        return;
-      }
-
-      const labels = topProducts.map((item) => item.name);
-      const quantities = topProducts.map((item) => item.sold);
-
-      new Chart(canvas.getContext("2d"), {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Total Terjual",
-              data: quantities,
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true },
-          },
-        },
-      });
-    */
-
     /* EDIT PROFILE */
     const editProfileForm = document.querySelector(".edit-profile");
     const exitForm = document.querySelector(".edit-profile i");
@@ -519,6 +469,60 @@
       }).format(parseFloat(productPriceValue.replace(/[^0-9.-]+/g, "")));
       productPrice.textContent = formattedPrice;
     });
+
+    /* TRANSACTION CHART */
+    const ctx = document.getElementById('transactionChart');
+    if (ctx) {
+      // Data passed from the view (as JSON)
+      const transactionDates = {{ transaction_dates|safe }};  // List of dates (e.g., ['2023-01-01', '2023-01-02'])
+      const transactionTotals = {{ transaction_totals|safe }};  // List of total prices (e.g., [100000, 150000])
+
+      new Chart(ctx, {
+        type: 'bar',  // Bar chart for total prices over time
+        data: {
+          labels: transactionDates,  // X-axis: Dates
+          datasets: [{
+            label: 'Total Harga Transaksi (Rp)',
+            data: transactionTotals,  // Y-axis: Total prices
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return 'Rp' + value.toLocaleString('id-ID');  // Format as Indonesian Rupiah
+                }
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Tanggal Transaksi'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return 'Total: Rp' + context.parsed.y.toLocaleString('id-ID');
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   });
 </script>
 {% endblock %}

@@ -12,7 +12,7 @@ def get_umkm_dashboard_data(user):
 
 def get_customer_dashboard_data(user):
   """Return summary data for regular customer dashboard."""
-  orders = Order.objects.filter(customer=user)
+  orders = Order.objects.filter(user=user)
   total_orders = orders.count()
   total_spent = sum(o.total_price for o in orders)
   return {

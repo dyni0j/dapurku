@@ -657,14 +657,15 @@ section,
 .product-item .desc,
 .order-list .order-container .order-info .products .product,
 .order-list,
+.profile .content .transaction-list,
 .order-list .order-container .order-info .desc,
 .order-list .order-container,
 .connects .desc,
 .cartpage .content .address-section .address-list,
 .order-list .order-container .order-info,
 footer,
-.manage-address .content,
-.manage-address .content form,
+:is(.manage-address, .transaction-form) .content,
+:is(.manage-address, .transaction-form) .content form,
 .contact-form,
 .umkm-products,
 .detail-content,
@@ -831,16 +832,7 @@ main {
 }
 .product-item .desc p {
   color: var(--warna-utama);
-  margin: 0.5rem 0;
-}
-.product-item .desc span:last-of-type {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--abuabu);
-}
-.product-item .desc span svg {
-  color: var(--yellow);
+  margin: 0.5rem 0 0 0;
 }
 .product-item .desc .btn-container {
   display: grid;
@@ -1118,7 +1110,7 @@ main {
   font-size: 1.1rem;
   font-weight: 700;
 }
-.detail-product .content .checkout button {
+.detail-product .content .checkout form > button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1374,7 +1366,7 @@ main {
   align-items: center;
   gap: 1rem;
 }
-.cartpage .content .spanBtn .btn-container :is(a, button) {
+.cartpage .content .spanBtn .btn-container a {
   font-size: 1.25rem;
   font-weight: 500;
 }
@@ -1712,7 +1704,7 @@ main {
   color: var(--putih);
   font-size: 1rem;
   font-weight: 600;
-  margin: 2rem 0 0 auto;
+  margin: 0 0 0 auto;
   padding: 0.5rem 1rem;
   border: 2px solid var(--red);
   border-radius: 10px;
@@ -1861,12 +1853,25 @@ main {
   height: 150px;
 }
 
-.profile .content .my-products .head {
+.transaction-chart {
+  margin: 20px 0;
+  text-align: center;
+}
+.no-chart {
+  color: #666;
+  font-style: italic;
+}
+#transactionChart {
+  max-width: 100%;
+  height: auto;
+}
+
+.profile .content :is(.my-products, .transactions) .head {
   display: flex;
   justify-content: space-between;
   margin: 0 0 1.5rem 0;
 }
-.profile .content .my-products .head a {
+.profile .content :is(.my-products, .transactions) .head a {
   display: flex;
   align-items: center;
   background-color: var(--warna-utama);
@@ -1876,41 +1881,92 @@ main {
   border: 2px solid var(--warna-utama);
   border-radius: 10px;
 }
-.profile .content .my-products .head a:hover {
+.profile .content :is(.my-products, .transactions) .head a:hover {
   background-color: var(--putih);
   color: var(--warna-utama);
   border: 2px solid var(--warna-utama);
   transition: 0.3s;
 }
-.profile .content .dashboard {
-  gap: 1.5rem;
-  background-color: #f9f9f9;
-  margin: 3rem 0 0 0;
-  padding: 4rem 3rem 3rem 3rem;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.profile .content .transactions {
+  margin: 2rem 0 1.5rem 0;
 }
-.profile .content .dashboard .metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.profile .content .dashboard .metrics .metric-card {
-  flex: 1 1 200px;
-  background: white;
-  border-radius: 12px;
-  padding: 1rem;
+.profile .content .transactions .col {
+  background-color: var(--warna-utama);
+  color: var(--putih);
   text-align: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-.profile .content .dashboard .metrics .metric-card h3 {
-  color: #555;
-  font-size: 1rem;
-}
-.profile .content .dashboard .metrics .metric-card p {
-  font-size: 1.5rem;
   font-weight: 600;
-  color: #222;
+  padding: 1.5rem 0;
+}
+.profile .content .transactions .transaction-list {
+  border: 2px solid var(--abuabu);
+  border-top: none;
+}
+.profile .content .transactions :is(.col, .transaction-list .transaction-item) {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: center;
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item
+  .btn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 700;
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item
+  .btn-container
+  a:hover {
+  text-decoration: underline;
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item
+  .btn-container
+  a:first-of-type {
+  color: var(--yellow);
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item
+  .btn-container
+  a:last-of-type {
+  color: var(--red);
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item
+  span.no-transaction {
+  grid-column: span 6;
+  color: var(--red);
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+.profile
+  .content
+  .transactions
+  .transaction-list
+  .transaction-item:nth-child(even) {
+  border-top: 2px solid var(--abuabu);
+  border-bottom: 2px solid var(--abuabu);
+}
+.profile .content .transactions .transaction-list .transaction-item span {
+  text-align: center;
+  padding: 1.5rem 0;
 }
 
 /* UMKM PRODUCTS FORM */
@@ -2095,17 +2151,17 @@ main {
   color: var(--warna-utama);
 }
 
-.manage-address .content {
+:is(.manage-address, .transaction-form) .content {
   gap: 1rem;
 }
-.manage-address .content h1 {
+:is(.manage-address, .transaction-form) .content h1 {
   color: var(--warna-utama);
   text-align: center;
 }
-.manage-address .content form {
+:is(.manage-address, .transaction-form) .content form {
   gap: 0.5rem;
 }
-.manage-address .content form button {
+:is(.manage-address, .transaction-form) .content form button {
   background-color: var(--warna-utama);
   color: var(--putih);
   font-size: 1.25rem;
@@ -2471,7 +2527,6 @@ footer .contact .row {
   .cartpage .content .checkout .btn-container {
     gap: 0.75rem;
   }
-  .cartpage .content .spanBtn .btn-container :is(a, form button),
   .cartpage .content .checkout .btn-container a {
     font-size: 1rem;
     padding: 0.5rem 1.25rem;
@@ -2479,11 +2534,14 @@ footer .contact .row {
   .cartpage .content .spanBtn .btn-container {
     gap: 0.75rem;
   }
-  .cartpage .content .spanBtn .btn-container a {
-    padding: 0.5rem 0 !important;
-  }
   .cartpage .content .spanBtn > span {
     font-size: 1rem;
+  }
+  .cartpage .content .spanBtn .btn-container a {
+    font-size: 1rem;
+  }
+  .cartpage .content .spanBtn .btn-container a:last-of-type {
+    padding: 0.75rem 1.25rem;
   }
   .cartpage .content .address-section .address-form .inputs {
     grid-template-columns: repeat(2, 1fr);
@@ -2523,7 +2581,8 @@ footer .contact .row {
   }
   :is(.profile .content .details, .umkm-info) .desc span,
   .profile .content .details #editBtn,
-  .profile .content .my-products .head a {
+  .profile .content .my-products .head a,
+  .profile .content .transactions .head a {
     font-size: 1rem;
   }
   .profile .content .my-products .head a {
@@ -2547,9 +2606,6 @@ footer .contact .row {
   }
   .profile .content .dashboard .metrics .metric-card p {
     font-size: 1.25rem;
-  }
-  .profile .content .logout-btn {
-    margin: 1.5rem 0 0 auto;
   }
   .profile .content .edit-profile form span {
     font-size: 1.5rem;
@@ -2678,6 +2734,19 @@ footer .contact .row {
     margin: 0.25rem 0 0.5rem 0;
   }
 
+  .profile
+    .content
+    .transactions
+    :is(.col, .transaction-list .transaction-item) {
+    font-size: 0.75rem;
+  }
+  .profile
+    .content
+    .transactions
+    :is(.col, .transaction-list .transaction-item span) {
+    padding: 1rem 0;
+  }
+
   footer {
     gap: 1rem;
     padding: 2rem 0;
@@ -2769,7 +2838,7 @@ footer .contact .row {
   }
 
   .main-header {
-    background-position: -375px 0;
+    background-position: -220px 0;
   }
   .main-header :is(.main-navbar, .products-navbar) .logo .head a:first-of-type {
     width: 50px;
@@ -2818,12 +2887,9 @@ footer .contact .row {
   .product-item .desc {
     padding: 0.25rem 0.75rem;
   }
-  .product-item .desc span:last-of-type {
-    gap: 0.25rem;
-  }
   .product-item .desc p {
     font-size: 0.5rem;
-    margin: 0.25rem 0;
+    margin: 0.25rem 0 0 0;
   }
   .button-lihat-produk {
     margin: 1.5rem 0 0 0;
@@ -2973,6 +3039,12 @@ footer .contact .row {
     width: 15px;
     height: 15px;
   }
+  .cartpage .content .spanBtn .btn-container a {
+    font-size: 0.75rem;
+  }
+  .cartpage .content .spanBtn .btn-container a:last-of-type {
+    padding: 0.5rem 1rem;
+  }
   .cartpage .content .cart-products .product-info img {
     width: 50px;
     height: 50px;
@@ -3014,13 +3086,6 @@ footer .contact .row {
   }
   .cartpage .content .spanBtn .btn-container {
     gap: 0.5rem;
-  }
-  .cartpage .content .spanBtn .btn-container a {
-    padding: 0.25rem 0 !important;
-  }
-  .cartpage .content .spanBtn .btn-container :is(a, form button) {
-    font-size: 0.75rem;
-    padding: 0.25rem 1rem;
   }
   .cartpage .content .spanBtn > span {
     font-size: 0.75rem;
@@ -3110,17 +3175,12 @@ footer .contact .row {
   }
   .profile .content .logout-btn {
     font-size: 0.75rem;
-    margin: 1rem 0 0 auto;
     padding: 0.25rem 0.75rem;
   }
 
   .product-item .desc span,
   .product-item .category {
     font-size: 0.5rem;
-  }
-  .product-item .desc span svg {
-    width: 15px;
-    height: 15px;
   }
 
   .product-information {
@@ -3218,6 +3278,17 @@ footer .contact .row {
     margin: 0.25rem 0;
   }
 
+  .profile
+    .content
+    .transactions
+    :is(.col, .transaction-list .transaction-item) {
+    font-size: 0.5rem;
+  }
+  .profile .content .transactions .head a {
+    font-size: 0.75rem;
+    padding: 0 1rem;
+  }
+
   footer {
     gap: 0.5rem;
     padding: 1.5rem 0;
@@ -3255,7 +3326,7 @@ footer .contact .row {
   }
 
   .main-header {
-    background-position: -450px 0;
+    background-position: -350px 0;
   }
   .main-header :is(.main-navbar, .products-navbar) {
     flex-direction: column;
@@ -3287,13 +3358,6 @@ footer .contact .row {
   .products.all .content .all-products {
     gap: 1rem;
   }
-  .product-item .desc span:last-of-type {
-    font-size: 0.5rem;
-  }
-  .product-item .desc span svg {
-    width: 15px;
-    height: 15px;
-  }
   .product-list .no-products {
     font-size: 0.75rem;
     padding: 1rem;
@@ -3307,6 +3371,11 @@ footer .contact .row {
   }
   .product-form .content form {
     width: 300px;
+  }
+
+  .profile .content .details .desc .head h1,
+  .umkm-info .desc .head h1 {
+    font-size: 1rem;
   }
 
   .edit-profile form .main-details .desc-box textarea {
@@ -3323,6 +3392,9 @@ footer .contact .row {
     justify-items: end;
   }
 
+  .cartpage .content > .desc {
+    padding: 1rem 0.75rem;
+  }
   .cartpage .content .cart-products .product-info span {
     font-size: 0.5rem;
   }
@@ -3333,7 +3405,12 @@ footer .contact .row {
   .cartpage .content .address-selection > span {
     font-size: 0.75rem;
   }
+  .cartpage .content > .desc :is(span, label),
+  .cartpage .content .spanBtn .btn-container a,
   .cartpage .content .address-selection .address-option .address-details {
     font-size: 0.5rem;
+  }
+  .cartpage .content .spanBtn .btn-container a:last-of-type {
+    padding: 0.25rem 0.75rem;
   }
 }

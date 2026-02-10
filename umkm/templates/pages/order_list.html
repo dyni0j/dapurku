@@ -35,7 +35,7 @@
           <p class="quantity">Anda membeli {{ order.quantity }} produk</p>
           <p class="price">{{ order.product.price }}/pcs</p>
           <p class="totalPrice">Total Harga: Rp<span id="totalPrice"></span></p>
-          <p class="whatsapp">Contact: {{ order.user.phone_number }}</p>
+          <p class="whatsapp" id="whatsapp-button">Contact: {{ order.user.phone_number }}</p>
         </div>
       </div>
       {% empty %}
@@ -60,6 +60,18 @@
       const totalPrice = price * quantity;
       item.querySelector("#totalPrice").textContent = totalPrice.toLocaleString();
     });
+
+    // WhatsApp button functionality
+    const whatsappButton = document.getElementById("whatsapp-button");
+      whatsappButton.addEventListener("click", function (event) {
+        // Only message for the specific order clicked
+        const contact = event.target.textContent.replace("Contact: ", "").trim();
+        const message = `Halo, saya ingin menanyakan tentang pesanan saya.`;
+        const whatsappURL = `https://wa.me/${contact}?text=${encodeURIComponent(
+          message,
+        )}`;
+        window.open(whatsappURL, "_blank");
+      });
   });
 </script>
 {% endblock %}

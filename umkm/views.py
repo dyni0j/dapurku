@@ -31,8 +31,8 @@ from django.forms import inlineformset_factory
 
 from django.db import transaction
 from django.db.models import Sum
-from users_db.models import CustomUser, Product, Order, OrderItem, Cart, UserAddress
-from users_db.forms import RegisterForm, ProductForm, ProfileUpdateForm
+from users_db.models import CustomUser, Product, Order, OrderItem, Cart, UserAddress, Transaction
+from users_db.forms import RegisterForm, ProductForm, ProfileUpdateForm, TransactionForm
 
 
 loginSignupPage = [
@@ -50,6 +50,8 @@ plain_pages = [
   "add_address",
   "update_address",
   "order_list",
+  "add_transaction",
+  "edit_transaction",
 ]
 
 def loginPage(request):
@@ -119,6 +121,11 @@ def profilePage(request):
   user = request.user
   products = Product.objects.filter(umkm_user_id=user)
   form = ProfileUpdateForm(request.POST, request.FILES, instance=user)
+  transactions = Transaction.objects.filter(user=user).order_by('-transaction_date')
+
+  # Prepare data for the chart
+  transaction_dates = [t.transaction_date.strftime('%Y-%m-%d') for t in transactions]  # List of dates as strings
+  transaction_totals = [float(t.total_price) for t in transactions]  # List of total prices as floats
 
   # Handle profile update
   if request.method == 'POST':
@@ -129,22 +136,57 @@ def profilePage(request):
   else:
     form = ProfileUpdateForm(instance=user)
 
-  # Determine which dashboard to show
-  dashboard_data = (
-    get_umkm_dashboard_data(user)
-    if user.is_umkm else
-    get_customer_dashboard_data(user)
-  )
-
   context = {
     'page': page,
     'plain_page': page in plain_pages,
     'user': user,
     'form': form,
     'products': products,
-    'dashboard': dashboard_data
+    'transactions': transactions,
+    'transaction_dates': [t.transaction_date.strftime('%Y-%m-%d') for t in transactions],
+    'transaction_totals': [float(t.total_price) for t in transactions],
   }
-  return render(request, 'pages/profile.html', context)
+  return render(request, './pages/profile.html', context)
+
+@login_required
+def delete_transaction(request, transaction_id):
+  # Direct delete without confirmation for simplicity
+  transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)  # Ensure user owns it
+  transaction.delete()
+  messages.success(request, 'Transaksi berhasil dihapus.')
+  return redirect('profile')
+
+@login_required
+def add_transaction(request):
+    if request.method == 'POST':
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            transaction = form.save(commit=False)
+            transaction.user = request.user  # Ensure ownership
+            transaction.save()  # This computes total_price via save()
+            messages.success(request, 'Transaksi berhasil ditambahkan.')
+            return redirect('profile')
+    else:
+        form = TransactionForm()
+    
+    # only show products that belong to the user
+    products = Product.objects.filter(umkm_user_id=request.user)  # For the select dropdown
+    return render(request, './pages/transaction-form.html', {'form': form, 'products': products})
+
+@login_required
+def edit_transaction(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)  # Ensure user owns it
+    if request.method == 'POST':
+        form = TransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            form.save()  # This recomputes total_price via save()
+            messages.success(request, 'Transaksi berhasil diperbarui.')
+            return redirect('profile')
+    else:
+        form = TransactionForm(instance=transaction)
+    
+    products = Product.objects.all()  # For the select dropdown
+    return render(request, './pages/transaction-form.html', {'form': form, 'transaction': transaction, 'products': products})
 
 @login_required(login_url='login')
 def umkmProfilePage(request, user_id):
@@ -321,27 +363,6 @@ def delete_cart_item(request, cart_item_id):
 
 def contactPage(request):
   page = "contact"
-  
-  if request.method == 'POST':
-    name = request.POST.get('name')
-    email = request.POST.get('email')
-    message = request.POST.get('message')
-    
-    if not all([name, email, message]):
-      messages.error(request, "Semua field harus diisi.")
-      return redirect('contact')
-    
-    subject = f"Pesan Kontak dari {name}"
-    body = f"Nama: {name}\nEmail: {email}\nPesan:\n{message}"
-    recipient = 'contact@dapurku.store'
-    
-    try:
-      send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [recipient])
-      messages.success(request, "Pesan Anda telah dikirim! Kami akan segera menghubungi Anda.")
-    except Exception as e:
-      messages.error(request, f"Gagal mengirim pesan: {str(e)}")
-    
-    return redirect('contact')
   
   contents = {'page': page, 'plain_page': page in plain_pages}
   return render(request, './pages/contact.html', contents)

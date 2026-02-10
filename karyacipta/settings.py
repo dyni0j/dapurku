@@ -7,20 +7,29 @@ import os
 # ========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # ========================
 # SECURITY (Load from .env)
 # ========================
 SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)  # Set to False in production
 
 ALLOWED_HOSTS = [
     "dapurku.store",
     "www.dapurku.store",
-    "127.0.0.1",
+    "127.0.0.1",  # Keep for local testing
     "localhost",
 ]
 
+# Production Security (Add these for HTTPS and security)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True  # Force HTTPS
+    SESSION_COOKIE_SECURE = True  # Secure session cookies
+    CSRF_COOKIE_SECURE = True  # Secure CSRF cookies
+    SECURE_HSTS_SECONDS = 31536000  # HTTP Strict Transport Security (1 year)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME sniffing
+    SECURE_BROWSER_XSS_FILTER = True  # XSS protection
 
 # ========================
 # INSTALLED APPS
@@ -39,7 +48,6 @@ INSTALLED_APPS = [
     "umkm",
 ]
 
-
 # ========================
 # MIDDLEWARE
 # ========================
@@ -52,7 +60,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 # ========================
 # TEMPLATES
@@ -77,7 +84,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "karyacipta.wsgi.application"
 
-
 # ========================
 # DATABASE (MySQL)
 # ========================
@@ -88,13 +94,12 @@ DATABASES = {
         "USER": config("DB_USER"),
         "PASSWORD": config("DB_PASSWORD"),
         "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT"),
+        "PORT": config("DB_PORT", default=3306),
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
-
 
 # ========================
 # AUTH SETTINGS
@@ -109,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = "users_db.CustomUser"
 LOGIN_REDIRECT_URL = "/"
 
-
 # ========================
 # INTERNATIONALIZATION
 # ========================
@@ -117,7 +121,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Jakarta"
 USE_I18N = True
 USE_TZ = True
-
 
 # ========================
 # STATIC FILES (BEST PRACTICES)
@@ -132,40 +135,13 @@ STATICFILES_DIRS = [
 # Folder hasil collectstatic (JANGAN diubah)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
 # ========================
 # MEDIA FILES
 # ========================
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-
 # ========================
 # AUTO FIELD
 # ========================
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-# XENDIT PAYMENT GATEWAY
-XENDIT_SECRET_KEY = config('XENDIT_SECRET_KEY')
-XENDIT_PUBLIC_KEY = config('XENDIT_PUBLIC_KEY')
-XENDIT_IS_PRODUCTION = config('XENDIT_IS_PRODUCTION', default=False, cast=bool)
-
-# Validate keys
-if not XENDIT_SECRET_KEY or not XENDIT_PUBLIC_KEY:
-    if XENDIT_IS_PRODUCTION:
-        raise ValueError("XENDIT_SECRET_KEY and XENDIT_PUBLIC_KEY must be set in production.")
-    else:
-        import warnings
-        warnings.warn("Xendit keys are not set. Payment integration will fail.")
-
-# ========================
-# EMAIL CONFIGURATION 
-# ========================
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '@gmail.com'  # Your sending email
-EMAIL_HOST_PASSWORD = 'your_app_password'  # Use app password for Gmail
-DEFAULT_FROM_EMAIL = 'your_email@gmail.com'

@@ -188,37 +188,6 @@
 {% endblock %} {% block script %}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const overlays = document.querySelectorAll(".overlays img");
-    const activeImage = document.querySelector(".image-container > img");
-
-    overlays.forEach((overlay) => {
-      overlay.addEventListener("click", () => {
-        activeImage.src = overlay.src;
-        activeImage.alt = overlay.alt;
-        overlays.forEach((img) => img.classList.remove("active"));
-        overlay.classList.add("active");
-      });
-    });
-
-    const variantContainer = document.querySelector(".variant-container");
-    if (variantContainer) {
-      const lblVariant =
-        variantContainer.previousElementSibling.querySelector("span");
-      let activeVariantValue =
-        variantContainer.querySelector(".active")?.textContent.trim() || "";
-      lblVariant.textContent = activeVariantValue;
-
-      variantContainer.querySelectorAll("span").forEach((variant) => {
-        variant.addEventListener("click", () => {
-          variantContainer
-            .querySelectorAll("span")
-            .forEach((v) => v.classList.remove("active"));
-          variant.classList.add("active");
-          lblVariant.textContent = variant.textContent.trim();
-        });
-      });
-    }
-
     const price = document.querySelector(".price");
     const subTotal = document.querySelector(".subTotal");
     const counterInput = document.querySelector(".counter input");
@@ -236,15 +205,10 @@
     };
 
     const updateTotal = () => {
-      const total = document.querySelector(".total span:last-child");
-      const quantity = parseInt(counterInput.value) || 0;
-      const priceValue = parseInt(
-        product.price.replace("Rp", "").replace(/\./g, ""),
-      );
-      total.textContent =
-        quantity > 0
-          ? `Rp${(quantity * priceValue).toLocaleString("id-ID")}`
-          : "Rp0";
+      let quantity = parseInt(counterInput.value) || 0;
+      let total = quantity * parseInt(product.price.replace("Rp", ""));
+      const formattedTotal = total.toLocaleString("id-ID");
+      subTotal.nextElementSibling.textContent = `Rp ${formattedTotal}`;
     };
 
     if (counterInput && increaseBtn && decreaseBtn) {
